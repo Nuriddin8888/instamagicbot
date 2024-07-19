@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 
-conn = sqlite3.connect('instagrambot/users.db')
+conn = sqlite3.connect('users.db')
 cursor = conn.cursor()
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS users
