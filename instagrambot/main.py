@@ -211,7 +211,7 @@ async def admin_handler(message: types.Message):
 @dp.message_handler(state=Admin.password)
 async def password_handler(message: types.Message, state: FSMContext):
     if message.text == ADMIN_PASSWORD:
-        await message.answer("<b>Mutalov Nuriddin</b> xush kelibsiz!", reply_markup=admin_buttons)
+        await message.answer("Salom <b>Mutalov Nuriddin</b> xush kelibsiz!", reply_markup=admin_buttons)
         await state.finish()
     else:
         await message.answer("Noto'g'ri parol, iltimos qaytadan urinib ko'ring.")
