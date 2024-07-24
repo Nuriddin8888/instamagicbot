@@ -24,7 +24,9 @@ rate_it = InlineKeyboardMarkup(
 admin_buttons = InlineKeyboardMarkup(
     inline_keyboard=[
         [
-        InlineKeyboardButton(text="Foydalanuvchilarni ko'rish", callback_data="view_users"),
+        InlineKeyboardButton(text="Foydalanuvchilarni ko'rish", callback_data="view_users")
+        ],
+        [
         InlineKeyboardButton(text="Bot statistikasini ko'rish", callback_data="view_stats")
         ]
     ]
