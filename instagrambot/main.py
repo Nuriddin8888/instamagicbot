@@ -19,9 +19,7 @@ TOKEN = '7414116835:AAEQ__efrvIl7NmBBk1-a-LvzKqvNNAzTWU'
 ADMIN_CHAT_ID = 1921911753
 ADMIN_PASSWORD = '08080'
 
-PROXY_URL = 'https://proxy.server.3128'
-
-bot = Bot(token=TOKEN, parse_mode=types.ParseMode.HTML, proxy=PROXY_URL)
+bot = Bot(token=TOKEN, parse_mode=types.ParseMode.HTML)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
