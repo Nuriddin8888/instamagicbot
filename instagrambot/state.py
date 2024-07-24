@@ -11,3 +11,5 @@ class Registration(StatesGroup):
 
 class Admin(StatesGroup):
     password = State()
+    admin_password = State()
+    admin_message = State()
