@@ -199,7 +199,7 @@ async def qaytarish(message: types.Message, state: FSMContext):
     feedback_message = (
         f"Foydalanuvchi Fikr-mulohazalari 👇\n"
         f"Ismi:   {user[1]}\n"
-        f"Telefon raqami:   {user[2]}\n"
+        f"Telefon raqami:   +{user[2]}\n"
         f"Fikr-mulohazasi:   {text}"
     )
     
