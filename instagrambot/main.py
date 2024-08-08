@@ -7,7 +7,6 @@ from aiogram.utils import executor
 from aiogram.dispatcher import FSMContext
 from aiogram.types import ReplyKeyboardRemove
 import logging
-from buttons.default import *
 from buttons.inline import *
 from state import *
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -29,61 +28,13 @@ async def start_handler(message: types.Message, state: FSMContext):
     user = get_user(user_id)
     if user:
         await message.reply(f"Salom <b>{user[1]}</b> Havolani joylang 🔗", reply_markup=ReplyKeyboardRemove())
-        await state.finish()
     else:
-        await message.answer("Kerakli tilni tanlang:", reply_markup=get_language)
-        await state.set_state("choose_language")
-
-@dp.callback_query_handler(lambda c: c.data.startswith('lang_'), state="choose_language")
-async def process_language_selection(callback_query: types.CallbackQuery, state: FSMContext):
-    lang_code = callback_query.data.split('_')[1]
-    if lang_code == 'uz':
-        await bot.send_message(callback_query.from_user.id, "Siz O'zbek tilini tanladingiz.\nTo'liq ismingizni kiriting:")
-    elif lang_code == 'ru':
-        await bot.send_message(callback_query.from_user.id, "Вы выбрали русский язык.\nВведите ваше полное имя:")
-    elif lang_code == 'eng':
-        await bot.send_message(callback_query.from_user.id, "You selected English.\nPlease enter your full name:")
-    await bot.edit_message_reply_markup(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id, reply_markup=None)
-    await Registration.full_name.set()
-    await state.update_data(language=lang_code)
-
-@dp.message_handler(state=Registration.full_name)
-async def name_handler(message: types.Message, state: FSMContext):
-    full_name = message.text
-    await state.update_data(full_name=full_name)
-    data = await state.get_data()
-    lang_code = data.get('language')
-
-    if lang_code == 'uz':
-        prompt = "Telefon raqamingizni yuboring:" 
-    elif lang_code == 'ru':
-        prompt = "Отправьте ваш номер телефона:"
-    else:
-        prompt = "Please send your phone number:"
-
-    await message.answer(prompt, reply_markup=phone_button)
-    await Registration.phone_number.set()
-
-@dp.message_handler(content_types=types.ContentTypes.CONTACT, state=Registration.phone_number)
-async def phone_handler(message: types.Message, state: FSMContext):
-    user_id = message.from_user.id
-    phone_number = message.contact.phone_number
-
-    user_data = await state.get_data()
-    full_name = user_data['full_name']
-
-    add_user(user_id, full_name, phone_number)
-    lang_code = user_data.get('language')
-
-    if lang_code == 'uz':
-        msg = "Tabriklaymiz siz ro'yxatdan muvaffaqiyatli o'tdingiz!\nBotimizdan bemalol foydalanishingiz mumkin!!!\n\nIltimos botimizga havola yuborganingizdan keyin biroz kuting!!!"
-    elif lang_code == 'ru':
-        msg = "Поздравляем, вы успешно зарегистрировались!\nВы можете использовать наш бот!"
-    else:
-        msg = "Congratulations, you have successfully registered!\nYou can use our bot now!"
-
-    await message.answer(msg, reply_markup=ReplyKeyboardRemove())
+        full_name = message.from_user.full_name
+        username = message.from_user.username
+        add_user(user_id, full_name, username)
+        await message.reply(f"Xush kelibsiz, <b>{full_name}</b>!\nHavolani joylang 🔗", reply_markup=ReplyKeyboardRemove())
     await state.finish()
+
 
 @dp.message_handler(commands=['myregistration'])
 async def registertime_handler(message: types.Message):
@@ -199,7 +150,7 @@ async def qaytarish(message: types.Message, state: FSMContext):
     feedback_message = (
         f"Foydalanuvchi Fikr-mulohazalari 👇\n"
         f"Ismi:   {user[1]}\n"
-        f"Telefon raqami:   +{user[2]}\n"
+        f"User name:   @{user[2]}\n"
         f"Fikr-mulohazasi:   {text}"
     )
     
@@ -236,10 +187,7 @@ async def delete_me_handler(message: types.Message):
     user_id = message.from_user.id
     delete_user(user_id)
     delete_links(user_id)
-
     await message.answer("Sizning profilingiz muvaffaqiyatli o'chirildi.\nHayr salomat bo'ling 👋")
-
-
 
 
 @dp.message_handler(commands=['admin'])
@@ -257,6 +205,7 @@ async def password_handler(message: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(lambda c: c.data == 'view_users')
 async def view_users(callback_query: types.CallbackQuery):
+    await callback_query.answer()
     users = get_all_users()
     if users:
         users_list = "\n".join([f"{i+1}. {user[1]} - {user[2]}" for i, user in enumerate(users)])
@@ -266,8 +215,10 @@ async def view_users(callback_query: types.CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data == 'view_stats')
 async def view_stats(callback_query: types.CallbackQuery):
+    await callback_query.answer()
     stats = get_bot_stats()
     await bot.send_message(callback_query.from_user.id, f"Bot statistikasi:\n\n{stats}")
+
 
 async def on_start_up(dp):
     await bot.send_message(chat_id=ADMIN_CHAT_ID, text='Bot ishga tushdi!')

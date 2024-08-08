@@ -7,7 +7,7 @@ cursor = conn.cursor()
 cursor.execute("""CREATE TABLE IF NOT EXISTS users
     (id INTEGER PRIMARY KEY, 
     full_name TEXT, 
-    phone_number TEXT, 
+    user_name TEXT, 
     registration_date TEXT)""")
                
 cursor.execute("""CREATE TABLE IF NOT EXISTS links
@@ -17,10 +17,12 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS links
 
 conn.commit()
 
-def add_user(user_id, full_name, phone_number):
+def add_user(user_id, full_name, user_name):
     registration_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute("INSERT INTO users (id, full_name, phone_number, registration_date) VALUES (?, ?, ?, ?)", (user_id, full_name, phone_number, registration_date))
+    cursor.execute("INSERT INTO users (id, full_name, user_name, registration_date) VALUES (?, ?, ?, ?)", 
+                   (user_id, full_name, user_name, registration_date))
     conn.commit()
+
 
 def get_user(user_id):
     cursor.execute("SELECT * FROM users WHERE id=?", (user_id,))
@@ -50,7 +52,7 @@ def delete_links(user_id):
     conn.commit()
 
 def get_all_users():
-    cursor.execute("SELECT id, full_name, phone_number FROM users")
+    cursor.execute("SELECT id, full_name, user_name FROM users")
     return cursor.fetchall()
 
 def get_bot_stats():
